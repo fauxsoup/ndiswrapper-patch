@@ -28,7 +28,7 @@ prepare() {
 
 build() {
 	cd "$srcdir/$pkgname-$pkgver"
-	patch -p1 -i ../$pkgname-$pkgver.patch
+	patch -p1 -i ../ndiswrapper-1.59.patch
 	make -C driver KVERS_UNAME=${_KERNEL}
 	make -C utils
 }
