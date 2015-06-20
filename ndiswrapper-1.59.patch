@@ -8,7 +8,7 @@ diff -aur ndiswrapper-1.59.old/driver/crt.c ndiswrapper-1.59.new/driver/crt.c
 -	net_srandom(seed);
 +	prandom_seed((__force u32)(seed));
  }
- 
+
  noregparm int WIN_FUNC(rand,0)
 diff -aur ndiswrapper-1.59.old/driver/ntoskernel.h ndiswrapper-1.59.new/driver/ntoskernel.h
 --- ndiswrapper-1.59.old/driver/ntoskernel.h	2013-11-28 20:42:36.000000000 +0100
@@ -16,7 +16,7 @@ diff -aur ndiswrapper-1.59.old/driver/ntoskernel.h ndiswrapper-1.59.new/driver/n
 @@ -347,7 +347,7 @@
  #define netdev_notifier_info_to_dev(x) ((struct net_device *)(x))
  #endif
- 
+
 -#ifdef INIT_COMPLETION
 +#if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
  static inline void reinit_completion(struct completion *x)
@@ -31,7 +31,7 @@ diff -aur ndiswrapper-1.59.old/driver/ntoskernel.h ndiswrapper-1.59.new/driver/n
  	local_irq_restore(flags);					\
 -	preempt_check_resched();					\
  } while (0)
- 
+
  static inline ULONG SPAN_PAGES(void *ptr, SIZE_T length)
 diff -aur ndiswrapper-1.59.old/driver/ndis.c ndiswrapper-1.59.new/driver/ndis.c
 --- ndiswrapper-1.59.old/driver/ndis.c	2013-11-28 14:42:36.000000000 -0500
@@ -41,16 +41,47 @@ diff -aur ndiswrapper-1.59.old/driver/ndis.c ndiswrapper-1.59.new/driver/ndis.c
  	mutex_lock(&loader_mutex);
  	nt_list_for_each_entry(setting, setting_list, list) {
 -		if (strnicmp(keyname, setting->name, length) == 0) {
-+		if (strcasecmp(keyname, setting->name, length) == 0) {
++		if (strcasecmp(keyname, setting->name) == 0) {
  			TRACE2("setting %s='%s'", keyname, setting->value);
  			mutex_unlock(&loader_mutex);
  			*param = ndis_encode_setting(setting, type);
 @@ -502,7 +502,7 @@
- 
+
  	mutex_lock(&loader_mutex);
  	nt_list_for_each_entry(setting, &nmb->wnd->wd->settings, list) {
 -		if (strnicmp(keyname, setting->name, ansi.length) == 0) {
-+		if (strcasecmp(keyname, setting->name, ansi.length) == 0) {
++		if (strcasecmp(keyname, setting->name) == 0) {
  			mutex_unlock(&loader_mutex);
  			if (ndis_decode_setting(setting, param))
  				*status = NDIS_STATUS_FAILURE;
+diff -aur ndiswrapper-1.59.old/driver/Makefile ndiswrapper-1.59.new/driver/Makefile
+--- ndiswrapper-1.59.old/driver/Makefile	2013-11-28 14:42:35.000000000 -0500
++++ ndiswrapper-1.59.new/driver/Makefile	2015-06-20 12:23:05.391702765 -0400
+@@ -17,7 +17,7 @@
+ # KBUILD is the path to the Linux kernel build tree.  It is usually the
+ # same as the kernel source tree, except when the kernel was compiled in
+ # a separate directory.
+-KBUILD ?= $(shell readlink -f /lib/modules/$(KVERS_UNAME)/build)
++KBUILD ?= $(shell readlink -f /usr/lib/modules/$(KVERS_UNAME)/build)
+
+ ifeq (,$(KBUILD))
+ $(error Kernel build tree not found - please set KBUILD to configured kernel)
+@@ -53,7 +53,7 @@
+ $(error Cannot find UTS_RELEASE in $(VERSION_H), please report)
+ endif
+
+-INST_DIR = /lib/modules/$(KVERS)/misc
++INST_DIR = /usr/lib/modules/$(KVERS)/misc
+
+ SRC_DIR=$(shell pwd)
+diff -aur ndiswrapper-1.59.old/utils/Makefile ndiswrapper-1.59.new/utils/Makefile
+--- ndiswrapper-1.59.old/utils/Makefile 2013-11-28 14:42:36.000000000 -0500
++++ ndiswrapper-1.59.new/utils/Makefile 2015-06-20 12:32:15.381687460 -0400
+@@ -1,5 +1,5 @@
+-sbindir = /sbin
+-usrsbindir = /usr/sbin
++sbindir = /usr/bin
++usrsbindir = /usr/bin
+
+ DRIVER_DIR ?= ../driver
+ HEADERS = $(DRIVER_DIR)/loader.h $(DRIVER_DIR)/ndiswrapper.h

@@ -15,7 +15,7 @@ provides=('ndiswrapper')
 install=".install"
 source=("http://download.sourceforge.net/ndiswrapper/$pkgname-$pkgver.tar.gz" "https://raw.githubusercontent.com/fauxsoup/ndiswrapper-patch/master/ndiswrapper-1.59.patch")
 md5sums=('e26a7213468ccd6b0bb4c211c7aadeaa'
-         '2cfa85362b80d9351a49b737f5ac9210')
+         '76298a85e1442eb65990cadbaaeaa321')
 
 _EXTRAMODULES='extramodules-3.14-ARCH'
 _KERNEL=$(cat /usr/lib/modules/${_EXTRAMODULES}/version)
