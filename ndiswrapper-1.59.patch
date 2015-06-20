@@ -33,3 +33,24 @@ diff -aur ndiswrapper-1.59.old/driver/ntoskernel.h ndiswrapper-1.59.new/driver/n
  } while (0)
  
  static inline ULONG SPAN_PAGES(void *ptr, SIZE_T length)
+diff -aur ndiswrapper-1.59.old/driver/ndis.c ndiswrapper-1.59.new/driver/ndis.c
+--- ndiswrapper-1.59.old/driver/ndis.c	2013-11-28 14:42:36.000000000 -0500
++++ ndiswrapper-1.59.new/driver/ndis.c	2015-06-20 12:03:30.211735468 -0400
+@@ -438,7 +438,7 @@
+ 	struct wrap_device_setting *setting;
+ 	mutex_lock(&loader_mutex);
+ 	nt_list_for_each_entry(setting, setting_list, list) {
+-		if (strnicmp(keyname, setting->name, length) == 0) {
++		if (strcasecmp(keyname, setting->name, length) == 0) {
+ 			TRACE2("setting %s='%s'", keyname, setting->value);
+ 			mutex_unlock(&loader_mutex);
+ 			*param = ndis_encode_setting(setting, type);
+@@ -502,7 +502,7 @@
+ 
+ 	mutex_lock(&loader_mutex);
+ 	nt_list_for_each_entry(setting, &nmb->wnd->wd->settings, list) {
+-		if (strnicmp(keyname, setting->name, ansi.length) == 0) {
++		if (strcasecmp(keyname, setting->name, ansi.length) == 0) {
+ 			mutex_unlock(&loader_mutex);
+ 			if (ndis_decode_setting(setting, param))
+ 				*status = NDIS_STATUS_FAILURE;
