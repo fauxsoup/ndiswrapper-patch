@@ -13,7 +13,7 @@ makedepends=('linux-headers>=3.14' 'linux-headers<3.15')
 optdepends=('ndisgtk: GTK+ based frontend for ndiswrapper.')
 provides=('ndiswrapper')
 install=".install"
-source=("http://download.sourceforge.net/ndiswrapper/$pkgname-$pkgver.tar.gz" "https://raw.githubusercontent.com/Schwartz/ndiswrapper-patch/master/ndiswrapper-1.59.patch")
+source=("http://download.sourceforge.net/ndiswrapper/$pkgname-$pkgver.tar.gz" "https://raw.githubusercontent.com/fauxsoup/ndiswrapper-patch/master/ndiswrapper-1.59.patch")
 md5sums=('e26a7213468ccd6b0bb4c211c7aadeaa'
          '2cfa85362b80d9351a49b737f5ac9210')
 
